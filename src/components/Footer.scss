@@ -1,0 +1,31 @@
+@keyframes logo-spin {
+  to   { transform: rotate(0deg); }
+  from { transform: rotate(360deg); }
+}
+.footer {
+  width: 100%;
+  background-color: #222;
+  height: 50px;
+  padding: 0px;
+  color: white;
+  vertical-align: middle;
+  h2 {
+    float: right;
+    padding-top: 10px;
+    margin: 0;
+  }
+  .logo {
+    height: 100%;
+    width: 100%;
+    background: url('./logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: logo-spin 12s infinite linear;
+  }
+  #logoDiv {
+    float: right;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+  }
+}
