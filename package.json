@@ -2,6 +2,7 @@
   "name": "tic-metac-toe",
   "version": "1.0.0",
   "main": "index.js",
+  "author": "Steve Zelek",
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server",
