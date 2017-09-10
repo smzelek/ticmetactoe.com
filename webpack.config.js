@@ -5,9 +5,6 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   filename: 'index.html',
   inject: 'body'
 });
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
-// const ExtractTextPluginConfig = new ExtractTextPlugin('styles.css');
-
 module.exports = {
   entry: './src/index.js',
   output: {

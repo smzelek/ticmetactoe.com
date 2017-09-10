@@ -3,7 +3,7 @@ import './Footer.scss';
 
 function Footer() {
   return (
-    <div className="footer">
+    <div id="footer">
       <div id="logoDiv">
         <div className="logo"></div>
       </div>

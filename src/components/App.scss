@@ -1,18 +1,4 @@
-* {
-  user-select: none;
-  cursor: default;
-  font-family: 'Indie Flower', cursive;
-}
-h2 {
-  margin:0;
-}
-html {
-  min-width: 780px;
-  min-height: 550px;
-  height: 100%;
-  background: #F5F5F5;
-}
-body, #root, #container {
+#container {
   height: 100%;
   padding:0;
   margin:0;
@@ -22,132 +8,141 @@ body, #root, #container {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-#game {
-  width: 700px;
-  height: 500px;
-  position: relative;
-  display: inline-block;
-  text-align: center;
-  background: url('./whiteboard.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  box-sizing: border-box;
-  padding:22px 15px 34px 15px;
-  h2 {
-    color:black;
-    font-size: 40px;
-    padding-top:10px;
+  svg {
+    position:absolute;
+    left: 0;
+    top: 0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    line {
+      position: absolute;
+      stroke-width:2;
+      &.xline {
+        stroke:#00f;
+      }
+      &.oline {
+        stroke:#f00;
+      }
+    }
+  }
+  #game {
+    width: 700px;
+    height: 500px;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    background: url('./whiteboard.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+    padding:22px 15px 34px 15px;
+    h2 {
+      margin:0;
+      color:black;
+      font-size: 40px;
+      padding-top:10px;
+      height: 58px;
+    }
+    #board {
+      padding-top:15px;
+      display: inline-block;
+    }
+    #winner {
+      position: absolute;
+      right:10%;
+      top:40%;
+      font-size: 30px;
+      font-weight: bold;
+      transform:rotate(-15deg);
+      &.xwins {
+        color:blue;
+      }
+      &.owins {
+        color:red;
+      }
+    }
+    
+    button {
+      border:0;
+      outline:0;
+      background-color: transparent;
+      &:focus {
+        outline:0;
+      }
+    }
+    .row {
+      clear:both;
+    }
+    .middle {
+      border: .5px solid black;
+    }
+    .top, .bottom {
+      border-left: .5px solid black;
+      border-right: .5px solid black;
+    }
+    .left, .right {
+      border-top: .5px solid black;
+      border-bottom: .5px solid black;
+    }
+    #new-game {
+      font-size:20px;
+      display: block;
+      border:none;
+      position: absolute;
+      height:30px;
+      right:20px;
+      bottom:35px;
+      &:hover {
+        font-weight: bold;
+      }
+    }
+    .square {
+      text-align:center;
+      padding:0px;
+      font-size:30px;
+      line-height:20px;
+      height: 30px;
+      width: 30px;
+      float:left;
+      font-weight:bold;
+      &.osquare {
+        color:red;
+      }
+      &.xsquare {
+        color:blue;
+      }
+    }
+    
+    .board {
+      float:left;
+      border-width:2px;
+      padding:5px;
+      border-color:#6C6C6C;
+      position: relative;
+      .winningBoard {
+        position: absolute;
+        top: 0;
+        right:0;
+        bottom:0;
+        left:0;
+        font-size:150px;
+        font-weight: bold;
+        line-height: 100px;
+        &.oboard {
+          color:rgba(red, 0.2);
+        }
+        &.xboard {
+          color:rgba(blue,0.2);
+        }
+      }
+      &.currentBoard {
+        background-clip: content-box;
+        box-shadow:
+          inset 0 0 50px rgba(black,.2),
+          inset 0 0 1px white;
+      }
+    }
   }
 }
-#board {
-  padding-top:15px;
-  display: inline-block;
-}
-#winner {
-  position: absolute;
-  right:10%;
-  top:40%;
-  font-size: 30px;
-  transform:rotate(-15deg);
-}
-.xwins {
-  color:blue;
-}
-.owins {
-  color:red;
-}
-#new-game {
-  display: block;
-  border:none;
-  position: absolute;
-  right:20px;
-  bottom:35px;
-  &:hover {
-    font-weight: bold;
-  }
-}
-svg {
-  position:absolute;
-  left: 0;
-  top: 0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
-line {
-  stroke-width:2;
-}
-.xline {
-  stroke:#00f;
-}
-.oline {
-  stroke:#f00;
-}
-button {
-  border:.5px solid black;
-  font-size:20px;
-  background: transparent;
-  outline:0;
-}
-.square {
-  text-align:center;
-  padding:0px;
-  outline:0;
-  font-size:30px;
-  line-height:20px;
-  height: 30px;
-  width: 30px;
-  background-color: transparent;
-  float:left;
-  border:0;
-  font-weight:bold;
-  font-family: 'Indie Flower';
-}
-.middle {
-  border: .5px solid black;
-}
-.top, .bottom {
-  border-left: .5px solid black;
-  border-right: .5px solid black;
-}
-.left, .right {
-  border-top: .5px solid black;
-  border-bottom: .5px solid black;
-}
-.osquare {
-  color:red;
-}
-.xsquare {
-  color:blue;
-}
-.xsquare.winningsquare {
-  background: lightblue;
-}
-.osquare.winningsquare {
-  background: pink;
-}
-button:focus {
-  outline:0;
-}
-.board {
-  float:left;
-  border-width:2px;
-  padding:5px;
-  border-color:#6C6C6C;
-}
-.oboard {
-  background:pink;
-}
-.xboard {
-  background:lightblue;
-}
-.row {
-  clear:both;
-}
-.currentBoard {
-  background-clip: content-box;
-  box-shadow:
-    inset 0 0 50px rgba(black,.2),
-    inset 0 0 1px white;
-}
+

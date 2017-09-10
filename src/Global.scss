@@ -1,0 +1,16 @@
+* {
+    user-select: none;
+    cursor: default;
+    font-family: 'Indie Flower', cursive;
+}
+html {
+    min-width: 780px;
+    min-height: 550px;
+    height: 100%;
+    background: #F5F5F5;
+}
+body, #root {
+    height: 100%;
+    padding:0;
+    margin:0;
+}
