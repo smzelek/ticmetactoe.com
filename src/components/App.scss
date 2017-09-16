@@ -129,6 +129,7 @@
         font-size:150px;
         font-weight: bold;
         line-height: 100px;
+        pointer-events: none;
         &.oboard {
           color:rgba(red, 0.2);
         }

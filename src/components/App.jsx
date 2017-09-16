@@ -34,14 +34,14 @@ class MiniBoard extends React.Component {
       const row = Array(3).fill(null).map((v, j) => {
         const squareNum = i * 3 + j;
         return <Square
-          key={`square ${(this.props.boardNum*9)+squareNum}`}
+          key={`square ${(this.props.boardNum * 9) + squareNum}`}
           registerSquare={(el) => this.props.registerSquare(squareNum, el)}
           squareNum={squareNum}
           value={this.props.boardValue[squareNum]}
           onClick={() => this.props.onClick(squareNum)} />;
       });
       return (
-        <div key={`minirow ${this.props.boardNum*4+i}`}>
+        <div key={`minirow ${this.props.boardNum * 4 + i}`}>
           {row}
           <div className="row"></div>
         </div>
@@ -49,12 +49,12 @@ class MiniBoard extends React.Component {
     });
 
     var wonBoard = '';
-    
+
     if (this.props.gameWinningLine !== null && this.props.gameWinningLine.includes(this.props.boardNum)) {
-     
+
       var boardWinner = this.props.gameWinner === 'x' ? 'xboard' : 'oboard';
       var classes = `winningBoard ${boardWinner}`
-     
+
       wonBoard = (
         <div className={classes}>
           {this.props.gameWinner.toUpperCase()}
@@ -198,18 +198,11 @@ class Board extends React.Component {
     })
   }
 
-  resize() {
-    this.forceUpdate()
-  }
-
   componentWillMount() {
-    this.resize();
-  }
-  componentDidMount() {
-    window.addEventListener("resize", this.resize);
+    window.addEventListener("resize", () => this.forceUpdate());
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this.resize);
+    window.removeEventListener("resize", () => this.forceUpdate());
   }
 
   render() {
@@ -274,11 +267,11 @@ class Board extends React.Component {
         <div id="app">
           <div id="game">
             <h2>Tic Metac Toe</h2>
-            <div id="board">{board}</div>  
+            <div id="board">{board}</div>
             <button id="new-game" onClick={() => this.newGame()}>new game?</button>
             {gameWinner}
           </div>
-          <svg>{winLines}</svg>
+          <svg id="line-canvas">{winLines}</svg>
         </div>
         <Footer />
       </div>
