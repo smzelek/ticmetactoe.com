@@ -4,3 +4,7 @@ import App from './components/App.jsx';
 import './Global.scss';
 
 ReactDOM.render(<App />, document.getElementById('root'));
+
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('sw.js')
+}
