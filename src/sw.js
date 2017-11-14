@@ -1,7 +1,7 @@
 self.oninstall = function () {
-    caches.open('tmtCache').then(function(cache) {
+    caches.open('tmtCache').then(function (cache) {
         cache.addAll([
-            'index.html', 
+            'index.html',
             '/',
             'index.js'
         ])
@@ -10,6 +10,8 @@ self.oninstall = function () {
 
 self.onfetch = (event) => {
     event.respondWith(
-        caches.match(event.request)
+        fetch(event.request).catch(function () {
+            return caches.match(event.request);
+        })
     );
 };
