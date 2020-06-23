@@ -3,9 +3,9 @@ image: alpine:latest
 pages:
   stage: deploy
   script:
-  - echo 'Nothing to do...' > dist/test.t
+  - echo 'Nothing to do...' > public/test.t
   artifacts:
     paths:
-    - dist
+    - public
   only:
   - master

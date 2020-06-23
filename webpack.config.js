@@ -14,7 +14,7 @@ module.exports = {
         sw: './src/sw.js'
     },
     output: {
-        path: path.resolve('dist'),
+        path: path.resolve('public'),
         filename: '[name].js'
     },
     module: {
