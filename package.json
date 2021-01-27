@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "app": "webpack-dev-server --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --mode=production --env NODE_ENV=production --config webpack.prod.js",
     "test": "protractor ./test/protractor.conf.js",
     "webdriver": "webdriver-manager update"
   },

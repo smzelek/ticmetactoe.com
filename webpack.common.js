@@ -1,3 +1,4 @@
+// require('dotenv').config()
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -9,6 +10,7 @@ var API_URL = {
 };
 
 var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+console.log(process.env.NODE_ENV)
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
     template: './src/index.html',
