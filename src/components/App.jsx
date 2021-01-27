@@ -33,6 +33,9 @@ class App extends React.Component {
       gameMode: null,
       roomCode: null,
       roomCodeInput: '',
+      joiningRoom: false,
+      error: null,
+      errorClearTimer: null,
       lines:
         [[0, 1, 2],
         [3, 4, 5],
@@ -57,7 +60,10 @@ class App extends React.Component {
       boards: Array(9).fill(Array(9).fill(null)),
       boardWinners: Array(9).fill({ winner: null, winningLine: null }),
       gameWinner: null,
-      gameWinningLine: null
+      gameWinningLine: null,
+      joiningRoom: false,
+      error: null,
+      errorClearTimer: null
     })
   }
 
@@ -197,7 +203,44 @@ class App extends React.Component {
       case MESSAGE_TYPES.RECEIVE_MOVE: {
         return this.handleReceiveMove(message);
       }
+      case MESSAGE_TYPES.ERROR: {
+        return this.handleErrorMessages(message);
+      }
     }
+  }
+
+  handleErrorMessages(message) {
+    this.displayErrorMessages(message);
+
+    switch (message.body.subType) {
+      case MESSAGE_TYPES.JOIN_ROOM: {
+        return this.handleJoinRoomFailed();
+      }
+    }
+  }
+
+  displayErrorMessages(message) {
+    if (this.state.errorClearTimer) {
+      clearTimeout(this.state.errorClearTimer);
+    }
+
+    let clearTimer = setTimeout(() => {
+      this.setState({
+        error: null,
+        errorClearTimer: null
+      });
+    }, 5 * 1000);
+
+    this.setState({
+      error: message.body.message,
+      errorClearTimer: clearTimer
+    });
+  }
+
+  handleJoinRoomFailed() {
+    this.setState({
+      joiningRoom: false
+    });
   }
 
   handleGameStart(message) {
@@ -245,6 +288,16 @@ class App extends React.Component {
   }
 
   async joinWithRoomCode() {
+    this.setState({
+      joiningRoom: true
+    });
+
+    setTimeout(() => {
+      this.setState({
+        joiningRoom: false
+      })
+    }, 5 * 1000);
+
     await this.webSocketService.waitForConnection();
 
     this.webSocketService.webSocket.send(JSON.stringify({
@@ -464,9 +517,11 @@ class App extends React.Component {
     const createRoomMenu =
       (<div id="create-room-menu">
         <h3>room code:</h3>
-        {/* TODO: animate while waiting for roomCode API response */}
-        <h4 className="room-code">{this.state.roomCode}</h4>
-        <p>Waiting for your friend to join...</p>
+        <h4 className="room-code">
+          {this.state.roomCode === null && (<div className="loader"></div>)}
+          {this.state.roomCode}
+        </h4>
+        <p>{this.state.roomCode === null ? 'Generating room code...' : 'Waiting for your friend to join...'}</p>
         <button className="text-button corner-button" id="back-to-main-menu" onClick={() => this.mainMenu()}>back</button>
       </div>);
 
@@ -479,13 +534,16 @@ class App extends React.Component {
     const joinRoomMenu =
       (<div id="join-room-menu">
         <h3>room code:</h3>
-        <input className="room-code" type="text"
-          maxLength="6"
-          placeholder="??????"
-          value={this.state.roomCodeInput}
-          onInput={handleRoomCodeInput} />
-          {/* TODO: animate and disable while waiting for roomCode API response */}
-        <button className="text-button" id="join-button" onClick={() => this.joinWithRoomCode()}>join</button>
+        <form>
+          <input className="room-code" type="text"
+            maxLength="6"
+            placeholder="??????"
+            value={this.state.roomCodeInput}
+            onInput={handleRoomCodeInput} />
+          <button type="submit" className="text-button" disabled={this.state.joiningRoom || this.state.roomCodeInput.length < 6} id="join-button" onClick={() => this.joinWithRoomCode()}>
+            {this.state.joiningRoom ? <div className="loader"></div> : 'join'}
+          </button>
+        </form>
         <button className="text-button corner-button" id="back-to-main-menu" onClick={() => this.mainMenu()}>back</button>
       </div>);
 
@@ -508,6 +566,7 @@ class App extends React.Component {
           <div id="whiteboard">
             <h2>Tic Metac Toe</h2>
             {renderAppView()}
+            <div className="error-queue">{this.state.error}</div>
           </div>
         </div>
         <Footer />

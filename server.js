@@ -32,9 +32,11 @@ function handleJoinRoom(message, ws) {
         ws.send(JSON.stringify({
             type: MESSAGE_TYPES.ERROR,
             body: {
+                subType: MESSAGE_TYPES.JOIN_ROOM, 
                 message: `Room code ${roomCode} not found.`
             }
         }));
+        return;
     }
 
     rooms.set(roomCode, {
