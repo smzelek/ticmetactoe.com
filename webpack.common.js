@@ -29,6 +29,6 @@ module.exports = {
     },
     plugins: [
         HtmlWebpackPluginConfig,
-        new CleanWebpackPlugin(),
+        new CleanWebpackPlugin()
     ]
 }

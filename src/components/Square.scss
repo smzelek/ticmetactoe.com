@@ -1,0 +1,37 @@
+.square {
+    border: 0;
+    text-align: center;
+    padding: 0px;
+    font-size: 30px;
+    line-height: 20px;
+    height: 30px;
+    width: 30px;
+    float: left;
+    font-weight: bold;
+    outline: 0;
+    background-color: transparent;
+    &:focus {
+        outline: 0;
+    }
+
+    &.osquare {
+        color: red;
+    }
+    &.xsquare {
+        color: blue;
+    }
+
+    &.middle {
+        border: 0.5px solid black;
+    }
+    &.top,
+    &.bottom {
+        border-left: 0.5px solid black;
+        border-right: 0.5px solid black;
+    }
+    &.left,
+    &.right {
+        border-top: 0.5px solid black;
+        border-bottom: 0.5px solid black;
+    }
+}

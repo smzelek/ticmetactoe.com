@@ -24,3 +24,15 @@ pages:
     - install&build
   only:
   - master
+
+api:
+  image: ruby:latest
+  stage: deploy
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+  only: 
+  - master

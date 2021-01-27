@@ -34,7 +34,7 @@ function oWins() {
 }
 
 module.exports = {
-  title: element(by.css("#game h2")),
+  title: element(by.css("#whiteboard h2")),
   footer: element(by.css("#footer")),
   board: element(by.css("#board")),
   newGame: element(by.css("#new-game")),
