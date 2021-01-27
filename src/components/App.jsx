@@ -119,7 +119,6 @@ class App extends React.Component {
   }
 
   handleClick(b, i) {
-    console.log(this.state.turn, this.state.player)
     // check for turn locally and on server
     if (this.state.player !== this.state.turn)
       return;
@@ -203,7 +202,6 @@ class App extends React.Component {
   }
 
   webSocketMessageHandler(message) {
-    console.log(message);
     switch (message.type) {
       case MESSAGE_TYPES.ROOM_CREATED: {
         return this.handleRoomCreated(message);

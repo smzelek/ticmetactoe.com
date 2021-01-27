@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const { customAlphabet } = require('nanoid');
-const nanoIdGenerator = customAlphabet('345679acdefghjkmnpqrstuvwxy', 6)
+const nanoIdGenerator = customAlphabet('3679cdefghjkmnpqrtuvwxy', 6)
 const port = process.env.PORT || 8000;
 const wss = new WebSocket.Server({ port })
 
@@ -25,7 +25,6 @@ const MESSAGE_TYPES = {
 
 function handleMessage(message, ws) {
     console.log(`Received message => ${JSON.stringify(message)}`);
-    console.log(message.type)
     switch (message.type) {
         case MESSAGE_TYPES.CREATE_ROOM: {
             return handleCreateRoom(message, ws);

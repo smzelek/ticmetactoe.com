@@ -7,7 +7,7 @@ function Footer() {
       <div id="logoDiv">
         <div className="logo"></div>
       </div>
-      <h2>Coded by Steve Zelek using React.</h2>
+      <h2>Coded by Steve Zelek using React / NodeJS</h2>
     </div>
   );
 }

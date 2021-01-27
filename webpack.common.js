@@ -1,6 +1,14 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
+
+var API_URL = {
+    production: JSON.stringify('wss://tic-metac-toe-api.herokuapp.com/'),
+    development: JSON.stringify('ws://localhost:8000')
+};
+
+var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
     template: './src/index.html',
@@ -29,6 +37,9 @@ module.exports = {
     },
     plugins: [
         HtmlWebpackPluginConfig,
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new DefinePlugin({
+            'API_URL': API_URL[environment]
+        })
     ]
 }
