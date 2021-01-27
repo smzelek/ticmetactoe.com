@@ -9,4 +9,4 @@ const MESSAGE_TYPES = {
     KEEP_ALIVE: 'KEEP_ALIVE'
 };
 
-export default MESSAGE_TYPES;
+module.exports = MESSAGE_TYPES;

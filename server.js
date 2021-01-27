@@ -1,3 +1,4 @@
+const MESSAGE_TYPES = require('./src/types');
 const WebSocket = require('ws');
 const { customAlphabet } = require('nanoid');
 const nanoIdGenerator = customAlphabet('3679cdefghjkmnpqrtuvwxy', 6)
@@ -8,20 +9,6 @@ let rooms = new Map();
 
 // TODO: assign X randomly to one of the players.
 // TODO: cleanup player rooms on quit
-
-// var id = req.headers['sec-websocket-key'];
-// use to find rooms and cleanup when a player leaves.
-// also use to 'auth' moves instead of roomcode.
-
-const MESSAGE_TYPES = {
-    CREATE_ROOM: 'CREATE_ROOM',
-    ROOM_CREATED: 'ROOM_CREATED',
-    JOIN_ROOM: 'JOIN_ROOM',
-    ERROR: 'ERROR',
-    ASSIGN_SYMBOL_AND_START_GAME: 'ASSIGN_SYMBOL_AND_START_GAME',
-    SEND_MOVE: 'SEND_MOVE',
-    RECEIVE_MOVE: 'RECEIVE_MOVE'
-};
 
 function handleMessage(message, ws) {
     console.log(`Received message => ${JSON.stringify(message)}`);

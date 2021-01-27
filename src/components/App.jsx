@@ -3,29 +3,19 @@ import Footer from './Footer.jsx'
 import Board from './Board.jsx';
 import WebSocketService from './WebSocketService.js';
 import './App.scss';
-
-//add rules button
+import MESSAGE_TYPES from '../types';
 
 const APP_VIEW = {
   MAIN_MENU: 0,
   CREATE_ROOM_MENU: 1,
   JOIN_ROOM_MENU: 2,
   GAME: 3,
+  RULES: 4
 };
 
 const GAME_MODE = {
   LOCAL: 0,
   ONLINE: 1
-};
-
-const MESSAGE_TYPES = {
-  CREATE_ROOM: 'CREATE_ROOM',
-  ROOM_CREATED: 'ROOM_CREATED',
-  JOIN_ROOM: 'JOIN_ROOM',
-  ERROR: 'ERROR',
-  ASSIGN_SYMBOL_AND_START_GAME: 'ASSIGN_SYMBOL_AND_START_GAME',
-  SEND_MOVE: 'SEND_MOVE',
-  RECEIVE_MOVE: 'RECEIVE_MOVE'
 };
 
 class App extends React.Component {
@@ -119,7 +109,6 @@ class App extends React.Component {
   }
 
   handleClick(b, i) {
-    // check for turn locally and on server
     if (this.state.player !== this.state.turn)
       return;
     if (this.state.gameWinner)
@@ -128,10 +117,6 @@ class App extends React.Component {
       return;
     if (this.state.boards[b][i])
       return;
-
-    // if online, send B, I and symbol
-    // then handle response locally, and also handle opponent's turn in WS handler
-
 
     if (this.state.gameMode === GAME_MODE.ONLINE) {
       this.webSocketService.webSocket.send(JSON.stringify({
@@ -253,6 +238,12 @@ class App extends React.Component {
     });
   }
 
+  viewRules() {
+    this.setState({
+      appView: APP_VIEW.RULES,
+    });
+  }
+
   async joinWithRoomCode() {
     await this.webSocketService.waitForConnection();
 
@@ -342,7 +333,7 @@ class App extends React.Component {
     })
 
 
-    const gameOverText = () => {
+    const gameOverText1 = () => {
       if (this.state.gameMode === GAME_MODE.LOCAL) {
         return `${this.state.gameWinner.toUpperCase()} wins!`;
       }
@@ -352,13 +343,27 @@ class App extends React.Component {
 
     const gameOverText2 = () => {
       if (this.state.gameMode === GAME_MODE.LOCAL || this.state.gameWinner === this.state.player) {
-        return `${this.oppositeSymbol(this.state.gameWinner).toUpperCase()} = ☹`;
+        return (
+          <span>
+            {this.oppositeSymbol(this.state.gameWinner).toUpperCase()} =
+            <div className="svg-placeholder">
+              <div id="sad" className={this.oppositeSymbol(this.state.gameWinner)}></div>
+            </div>
+          </span>
+        );
       }
 
-      return <span>{this.oppositeSymbol(this.state.player).toUpperCase()} = <span className="bigger-face">☺</span></span>;
+      return (
+        <span>
+          {this.oppositeSymbol(this.state.player).toUpperCase()} =
+          <div className="svg-placeholder">
+            <div id="happy" className={this.oppositeSymbol(this.state.player)}></div>
+          </div>
+        </span>
+      );
     }
 
-    const winningClass = () => {
+    const gameOverText1Class = () => {
       if (this.state.gameMode === GAME_MODE.LOCAL) {
         return this.state.gameWinner;
       }
@@ -366,11 +371,20 @@ class App extends React.Component {
       return this.state.player;
     };
 
+    const gameOverText2Class = () => {
+      if (this.state.gameMode === GAME_MODE.LOCAL) {
+        return this.oppositeSymbol(this.state.gameWinner);
+      }
+
+      return this.oppositeSymbol(this.state.player);
+    };
+
+
     const gameWinner = this.state.gameWinner !== null && (
-      <div id="winner" className={winningClass()}>
-        {gameOverText()}
+      <div id="winner">
+        <span className={gameOverText1Class()}> {gameOverText1()} </span>
         <br />
-        {gameOverText2()}
+        <span className={gameOverText2Class()}> {gameOverText2()} </span>
       </div>);
 
     const renderAppView = () => {
@@ -383,6 +397,8 @@ class App extends React.Component {
           return createRoomMenu;
         case APP_VIEW.JOIN_ROOM_MENU:
           return joinRoomMenu;
+        case APP_VIEW.RULES:
+          return rules;
       }
     }
 
@@ -442,14 +458,14 @@ class App extends React.Component {
         <button className="text-button" onClick={() => this.startLocalGame()}>local play</button>
         <button className="text-button" onClick={() => this.createOnlineRoom()}>create room</button>
         <button className="text-button" onClick={() => this.joinOnlineRoom()}>join room</button>
+        <button className="text-button" onClick={() => this.viewRules()}>how to play</button>
       </div>);
 
     const createRoomMenu =
       (<div id="create-room-menu">
         <h3>room code:</h3>
-        {/* animate while waiting for roomCode API response */}
+        {/* TODO: animate while waiting for roomCode API response */}
         <h4 className="room-code">{this.state.roomCode}</h4>
-        {/* animate the dots for loading animation */}
         <p>Waiting for your friend to join...</p>
         <button className="text-button corner-button" id="back-to-main-menu" onClick={() => this.mainMenu()}>back</button>
       </div>);
@@ -463,16 +479,28 @@ class App extends React.Component {
     const joinRoomMenu =
       (<div id="join-room-menu">
         <h3>room code:</h3>
-        {/* animate while waiting for roomCode API response */}
         <input className="room-code" type="text"
           maxLength="6"
           placeholder="??????"
           value={this.state.roomCodeInput}
           onInput={handleRoomCodeInput} />
+          {/* TODO: animate and disable while waiting for roomCode API response */}
         <button className="text-button" id="join-button" onClick={() => this.joinWithRoomCode()}>join</button>
-        {/* animate the dots for loading animation */}
         <button className="text-button corner-button" id="back-to-main-menu" onClick={() => this.mainMenu()}>back</button>
       </div>);
+
+    const rules = (
+      <div id="rules">
+        <h3>how to play</h3>
+        <ul>
+          <li>Players take turns, just like regular tic-tac-toe.</li>
+          <li>Each board is won just like regular tic-tac-toe.</li>
+          <li>But when a player claims a square, their opponent has to play in the corresponding board.</li>
+          <li>Win 3 boards in a row to win Tic-Metac-Toe!</li>
+        </ul>
+        <button className="text-button corner-button" id="back-to-main-menu" onClick={() => this.mainMenu()}>back</button>
+      </div>
+    );
 
     return (
       <div id="container">

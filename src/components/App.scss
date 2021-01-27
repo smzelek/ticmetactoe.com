@@ -56,17 +56,18 @@
       font-size: 30px;
       font-weight: bold;
       transform: rotate(-15deg);
-      &.x {
+      .x {
         color: blue;
       }
-      &.o {
+      .o {
         color: red;
       }
 
-      .bigger-face {
-        font-size: 50px;
-        line-height: 30px;
-        margin-left: -10px;
+      .svg-placeholder {
+        display: inline-block;
+        width: 50px;
+        height: 30px;
+        position: relative;
       }
     }
 
@@ -122,7 +123,8 @@
     }
 
     #create-room-menu,
-    #join-room-menu {
+    #join-room-menu,
+    #rules {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
@@ -131,6 +133,18 @@
       }
       h3 {
         margin: 0;
+      }
+    }
+
+    #rules {
+      ul {
+        font-size: 20px;
+        width: 400px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        margin-left: calc(50% - 200px);
+        padding: 0;
       }
     }
 
@@ -181,5 +195,43 @@
   &:hover {
     font-weight: bold;
     background: #f5f5f5;
+  }
+}
+
+#sad {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  left: -8px;
+  top: -18px;
+
+  &.o {
+    background: url("./sad_red.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  &.x {
+    background: url("./sad_blue.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+#happy {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  left: -8px;
+  top: -18px;
+
+  &.o {
+    background: url("./happy_red.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  &.x {
+    background: url("./happy_blue.svg");
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }
