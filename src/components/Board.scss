@@ -1,0 +1,55 @@
+.board {
+    float: left;
+    padding: 5px;
+    position: relative;
+    cursor: default;
+    button {
+        cursor: not-allowed;
+    }
+
+    .winningBoard {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        font-size: 150px;
+        font-weight: bold;
+        line-height: 100px;
+        pointer-events: none;
+
+        &.oboard {
+            color: rgba(red, 0.2);
+        }
+        &.xboard {
+            color: rgba(blue, 0.2);
+        }
+    }
+    &.currentBoard {
+        background-clip: content-box;
+        box-shadow: inset 0 0 50px rgba(black, 0.2), inset 0 0 1px white;
+        button {
+            cursor: pointer;
+        }
+    }
+
+    &.noCurrent {
+        button {
+            cursor: pointer;
+        }
+    }
+
+    &.middle {
+        border: 2px solid #6c6c6c;
+    }
+    &.top,
+    &.bottom {
+        border-left: 2px solid #6c6c6c;
+        border-right: 2px solid #6c6c6c;
+    }
+    &.left,
+    &.right {
+        border-top: 2px solid #6c6c6c;
+        border-bottom: 2px solid #6c6c6c;
+    }
+}
