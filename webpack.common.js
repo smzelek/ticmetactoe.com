@@ -9,10 +9,10 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 
 module.exports = {
-    entry:
-    {
-        index: './src/index.js',
-        sw: './src/sw.js'
+    entry: "./src/index.tsx",
+    target: "web",
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
         path: path.resolve('public'),
@@ -20,8 +20,11 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
-            { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
             { test: /\.css$/, loader: 'style-loader!css-loader' },
             { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
             { test: /\.svg$/, loader: 'svg-url-loader' }

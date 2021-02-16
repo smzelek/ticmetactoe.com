@@ -9,6 +9,6 @@ module.exports = merge(common, {
         contentBase: './public',
     },
     plugins: [
-        new DefinePlugin({ 'API_URL': JSON.stringify('ws://localhost:8000') })
+        new DefinePlugin({ 'API_URL': JSON.stringify('http://localhost:8000') })
     ]
 });

@@ -5,6 +5,6 @@ const { DefinePlugin } = require('webpack');
 module.exports = merge(common, {
     mode: 'production',
     plugins: [
-        new DefinePlugin({'API_URL': JSON.stringify('wss://tic-metac-toe-api.herokuapp.com/')})
+        new DefinePlugin({'API_URL': JSON.stringify('https://guild-vault-tracker-api.herokuapp.com/')})
     ]
 });
