@@ -435,9 +435,9 @@ class App extends React.Component {
 
     const gameWinner = this.state.gameWinner !== null && (
       <div id="winner">
-        <span className={gameOverText1Class()}> {gameOverText1()} </span>
+        <span className={gameOverText1Class()}>{gameOverText1()}</span>
         <br />
-        <span className={gameOverText2Class()}> {gameOverText2()} </span>
+        <span className={gameOverText2Class()}>{gameOverText2()}</span>
       </div>);
 
     const renderAppView = () => {
@@ -508,7 +508,7 @@ class App extends React.Component {
 
     const mainMenu =
       (<div id="main-menu">
-        <button className="text-button" onClick={() => this.startLocalGame()}>local play</button>
+        <button id="local-play" className="text-button" onClick={() => this.startLocalGame()}>local play</button>
         <button className="text-button" onClick={() => this.createOnlineRoom()}>create room</button>
         <button className="text-button" onClick={() => this.joinOnlineRoom()}>join room</button>
         <button className="text-button" onClick={() => this.viewRules()}>how to play</button>
