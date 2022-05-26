@@ -36,7 +36,7 @@ jobs:
         run: npm run e2e:install
       - name: Test App
         run: |
-          npm run app
+          npm run app &
           npm run e2e
         timeout-minutes: 5
 
