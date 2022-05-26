@@ -6,84 +6,81 @@ on:
       - main
 
 jobs:
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cache NPM
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-      - name: Install
-        run: npm ci
+  # install:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Cache NPM
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'
+  #         cache: 'npm'
+  #     - name: Install
+  #       run: npm ci
 
-  test-app: 
-    needs: [install]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cache NPM
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-      - name: Install
-        run: npm ci
-      - name: Install Playwright
-        run: npm run e2e:install
-      - name: Test App
-        run: |
-          npm run app &
-          npm run e2e
-        timeout-minutes: 5
+  # test-app: 
+  #   needs: [install]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Cache NPM
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'
+  #         cache: 'npm'
+  #     - name: Install
+  #       run: npm ci
+  #     - name: Install Playwright
+  #       run: npm run e2e:install
+  #     - name: Test App
+  #       run: |
+  #         npm run app &
+  #         npm run e2e
+  #       timeout-minutes: 5
 
-  build-app:
-    env:
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-    needs: [install, test-app]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cache NPM
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-      - name: Install
-        run: npm ci
-      - name: Build App
-        run: npm run build:app
-        timeout-minutes: 5
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Deploy App
-        run: |
-          cd public/
-          zip -r build.zip .
-          aws s3 cp build.zip s3://tic-metac-toe/${{ github.sha }}.zip --content-type "application/zip; charset=utf-8"
-          URL=$(aws s3 presign s3://tic-metac-toe/${{ github.sha }}.zip)
-          aws amplify start-deployment --app-id ${{ secrets.AWS_AMPLIFY_APP_ID }} --branch-name prod --source-url $URL
+  # build-app:
+  #   env:
+  #     AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  #   needs: [install, test-app]
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Cache NPM
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'
+  #         cache: 'npm'
+  #     - name: Install
+  #       run: npm ci
+  #     - name: Build App
+  #       run: npm run build:app
+  #       timeout-minutes: 5
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Deploy App
+  #       run: |
+  #         cd public/
+  #         zip -r build.zip .
+  #         aws s3 cp build.zip s3://tic-metac-toe/${{ github.sha }}.zip --content-type "application/zip; charset=utf-8"
+  #         URL=$(aws s3 presign s3://tic-metac-toe/${{ github.sha }}.zip)
+  #         aws amplify start-deployment --app-id ${{ secrets.AWS_AMPLIFY_APP_ID }} --branch-name prod --source-url $URL
 
   build-api:
-    env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-    needs: [install, test-app]
+    # needs: [install, test-app]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Deploy to Heroku
-        run: |
-          heroku login
-          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-          git push heroku main
+      - uses: actions/checkout@v3
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
