@@ -88,4 +88,4 @@ jobs:
           cat .heroku | envsubst > ~/.netrc
           cat ~/.netrc
           heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-          git push heroku main
+          git push -f heroku main
