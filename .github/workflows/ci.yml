@@ -75,10 +75,15 @@ jobs:
           aws amplify start-deployment --app-id ${{ secrets.AWS_AMPLIFY_APP_ID }} --branch-name prod --source-url $URL
 
   build-api:
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
     needs: [install, test-app]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Deploy to Heroku
-        run: git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git main
+        run: |
+          heroku login
+          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+          git push heroku main
