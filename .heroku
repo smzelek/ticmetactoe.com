@@ -1,6 +1,6 @@
 machine api.heroku.com
-  login ${{ secrets.HEROKU_EMAIL }}
-  password ${{ secrets.HEROKU_TOKEN }}
+  login ${HEROKU_LOGIN}
+  password ${HEROKU_PASSWORD}
 machine git.heroku.com
-  login ${{ secrets.HEROKU_EMAIL }}
-  password ${{ secrets.HEROKU_TOKEN }}
+  login ${HEROKU_LOGIN}
+  password ${HEROKU_PASSWORD}
