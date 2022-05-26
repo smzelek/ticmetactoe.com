@@ -81,9 +81,6 @@ jobs:
       - uses: actions/checkout@v3
       - name:
         run: |
-          heroku login -i << EOF
-          ${{ secrets.HEROKU_EMAIL }}
-          ${{ secrets.HEROKU_TOKEN }}
-          EOF
+          cat .heroku | envsubst > ~/.netrc
           heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
           git push heroku main
