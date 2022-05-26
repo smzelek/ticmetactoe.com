@@ -78,9 +78,11 @@ jobs:
     # needs: [install, test-app]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to Heroku
         run: |
           cat .heroku | envsubst > ~/.netrc
+          cat ~/.netrc
           heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
           git push heroku main
