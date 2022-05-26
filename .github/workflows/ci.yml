@@ -35,7 +35,9 @@ jobs:
       - name: Install Playwright
         run: npm run e2e:install
       - name: Test App
-        run: npm run e2e
+        run: |
+          npm run app
+          npm run e2e
         timeout-minutes: 5
 
   build-app:
