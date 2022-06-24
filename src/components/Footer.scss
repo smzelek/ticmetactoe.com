@@ -1,32 +1,28 @@
 #footer {
-  width: 100%;
   background-color: #222;
-  height: 50px;
-  padding: 0px;
   color: white;
-  vertical-align: middle;
-  h2 {
-    float: right;
-    padding-top: 10px;
-    margin: 0;
-    height: 36px;
-  }
-  .logo {
-    height: 100%;
-    width: 100%;
-    background: url('./logo.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    animation: logo-spin 12s infinite linear;
-  }
-  #logoDiv {
-    float: right;
-    width: 50px;
-    height: 50px;
-    overflow: hidden;
-  }
-  @keyframes logo-spin {
-    to   { transform: rotate(0deg); }
-    from { transform: rotate(360deg); }
+  font-weight: bold;
+  font-size: 20px;
+  padding: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+
+  .github-link {
+    display: flex;
+    color: white;
+
+    &:visited {
+      color: white;
+    }
+    
+    &:hover, &:active {
+      filter:brightness(0.9)
+    }
+    
+    .github-logo {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
   }
 }
