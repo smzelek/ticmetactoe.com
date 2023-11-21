@@ -36,7 +36,7 @@ jobs:
         run: npm run e2e:install
       - name: Test App
         run: |
-          npm start &
+          npm run start:app &
           npm run e2e
         timeout-minutes: 5
 
@@ -44,18 +44,18 @@ jobs:
     needs: [install, test-app]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - name: Deploy to Heroku
-        env:
-          HEROKU_LOGIN: ${{ secrets.HEROKU_EMAIL }}
-          HEROKU_PASSWORD: ${{ secrets.HEROKU_TOKEN }}
-        run: |
-          cat .herokurc | envsubst > ~/.netrc
-          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-          git push heroku main
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+      - run: | 
+          npm ci
+          npm run build:server
+      - uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "tic-metac-toe-api"
+          heroku_email: "smzelek@gmail.com"
 
   deploy-app:
     env:

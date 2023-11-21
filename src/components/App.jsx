@@ -509,9 +509,8 @@ class App extends React.Component {
     const mainMenu =
       (<div id="main-menu">
         <button id="local-play" className="text-button" onClick={() => this.startLocalGame()}>local play</button>
-        {/* TODO: fix heroku backend */}
-        <button disabled className="text-button" onClick={() => this.createOnlineRoom()}>create room</button>
-        <button disabled className="text-button" onClick={() => this.joinOnlineRoom()}>join room</button>
+        <button className="text-button" onClick={() => this.createOnlineRoom()}>create room</button>
+        <button className="text-button" onClick={() => this.joinOnlineRoom()}>join room</button>
         <button className="text-button" onClick={() => this.viewRules()}>how to play</button>
       </div>);
 

@@ -5,9 +5,12 @@
   "author": "Steve Zelek",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --open --config webpack.dev.js",
-    "server": "node server.js",
+    "start:app": "webpack-dev-server --open --config webpack.dev.js",
+    "start:server": "node server.js",
     "build:app": "webpack --config webpack.prod.js",
+    "build:server": "",
+    "build": "npm run build:server",
+    "start": "npm run start:server",
     "e2e:install": "playwright install",
     "e2e": "playwright test"
   },
