@@ -15,6 +15,7 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "express": "^4.19.2",
     "nanoid": "^3.1.20",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

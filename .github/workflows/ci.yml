@@ -1,9 +1,18 @@
-name: CI/CD
+name: Deploy
 
 on:
   push:
     branches:
       - main
+
+env:
+  AWS_ACCOUNT_ID: 590184101838
+  AWS_REGION: us-east-1
+  AWS_APP: ticmetactoe-com
+  AWS_ECS_CLUSTER: cluster
+  NODE_VERSION: 16
+  BUILD_DIR: public/
+  CLOUDFLARE_ZONE: ce0ecdda6718cd2bde724be9a9e9ff02
 
 jobs:
   install:
@@ -14,12 +23,12 @@ jobs:
       - name: Cache NPM
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Install
         run: npm ci
 
-  test-app: 
+  test: 
     needs: [install]
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +37,7 @@ jobs:
       - name: Cache NPM
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Install
         run: npm ci
@@ -40,27 +49,67 @@ jobs:
           npm run e2e
         timeout-minutes: 5
 
-  deploy-api:
-    needs: [install, test-app]
+  build-api:
+    needs: [test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
+      - uses: aws-actions/configure-aws-credentials@v1
         with:
-          node-version: 16
-      - run: | 
-          npm ci
-          npm run build:server
-      - uses: akhileshns/heroku-deploy@v3.12.14
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_APP }}-github-role
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: 'no'
+      - id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "tic-metac-toe-api"
-          heroku_email: "smzelek@gmail.com"
+          registries: ${{ env.AWS_ACCOUNT_ID }}
+          mask-password: "true"
+      - uses: docker/setup-buildx-action@v3
+      - id: docker
+        shell: bash
+        env: 
+          IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_APP }}:${{ github.sha }}"
+        run: |
+          docker buildx build --push --platform linux/arm64 -t "${{ env.IMAGE }}" .
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+    outputs:
+      image: ${{ steps.docker.outputs.image }}
+
+  deploy-api:
+    needs: [build-api]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_APP }}-github-role
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: 'no'
+      - run: |
+          aws ecs describe-task-definition --task-definition "${{ env.AWS_APP }}" --query taskDefinition > task-definition.json
+          cat task-definition.json
+      - id: task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.AWS_APP }}
+          image: ${{ needs.build-api.outputs.image }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-definition.outputs.task-definition }}
+          service: ${{ env.AWS_APP }}
+          cluster: ${{ env.AWS_ECS_CLUSTER }}
+          wait-for-service-stability: false
 
   deploy-app:
-    env:
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-    needs: [install, test-app]
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -71,22 +120,28 @@ jobs:
       - name: Cache NPM
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Install
         run: npm ci
-      - name: Build App
+      - name: Build
         run: npm run build:app
         timeout-minutes: 5
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Deploy App
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_APP }}-github-role
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: 'no'
+      - name: Deploy Build
         run: |
-          cd public/
-          zip -r build.zip .
-          aws s3 cp build.zip s3://tic-metac-toe/${{ github.sha }}.zip --content-type "application/zip; charset=utf-8"
-          URL=$(aws s3 presign s3://tic-metac-toe/${{ github.sha }}.zip)
-          aws amplify start-deployment --app-id ${{ secrets.AWS_AMPLIFY_APP_ID }} --branch-name prod --source-url $URL
+          cd ${{ env.BUILD_DIR }}
+          aws s3 cp . s3://${{ env.AWS_APP }} --recursive
+      - name: Purge Cloudflare Cache
+        run: |
+          curl -fsSL "https://api.cloudflare.com/client/v4/zones/${{ env.CLOUDFLARE_ZONE }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything": true}' \
+            --fail --show-error
+        shell: bash
+  

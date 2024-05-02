@@ -1,10 +1,11 @@
 const MESSAGE_TYPES = require('./src/types');
-const WebSocket = require('ws');
 const { customAlphabet } = require('nanoid');
+const express = require('express')
 const nanoIdGenerator = customAlphabet('3679cdefghjkmnpqrtuvwxy', 6)
+const { Server } = require('ws')
 const port = process.env.PORT || 8000;
-const wss = new WebSocket.Server({ port })
 
+const app = express()
 let rooms = new Map();
 
 // TODO: assign X randomly to one of the players.
@@ -32,7 +33,7 @@ function handleJoinRoom(message, ws) {
         ws.send(JSON.stringify({
             type: MESSAGE_TYPES.ERROR,
             body: {
-                subType: MESSAGE_TYPES.JOIN_ROOM, 
+                subType: MESSAGE_TYPES.JOIN_ROOM,
                 message: `Room code ${roomCode} not found.`
             }
         }));
@@ -96,8 +97,23 @@ function handleSendMove(message, ws) {
     }));
 }
 
-wss.on('connection', ws => {
+const httpServer = app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+})
+const wsServer = new Server({ noServer: true })
+
+httpServer.on('upgrade', (req, socket, head) => {
+    wsServer.handleUpgrade(req, socket, head, (ws) => {
+        wsServer.emit('connection', ws, req)
+    })
+})
+
+app.get('/elb-status', (req, res, next) => {
+    console.log('GET /elb-status 200 OK')
+    res.status(200).send('OK')
+})
+
+wsServer.on('connection', (ws) => {
     ws.on('message', (message) => handleMessage(JSON.parse(message), ws));
 });
 
-console.log(`Server running at http://localhost:${port}`);
